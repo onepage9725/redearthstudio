@@ -178,6 +178,8 @@ if (galleryTrack && galleryViewport && galleryPrev && galleryNext) {
   let slideStep = 33.3333;
   let autoTimer;
   let touchStartX = 0;
+  let touchStartY = 0;
+  let lastViewportWidth = window.innerWidth;
 
   const getVisibleCount = () => {
     if (window.innerWidth <= 760) return 1;
@@ -190,7 +192,12 @@ if (galleryTrack && galleryViewport && galleryPrev && galleryNext) {
     galleryTrack.style.transform = `translateX(-${currentIndex * slideStep}%)`;
   };
 
-  const buildCarousel = () => {
+  const getLogicalIndex = () =>
+    ((currentIndex - cloneCount) % galleryImages.length + galleryImages.length) % galleryImages.length;
+
+  const buildCarousel = (preservePosition = true) => {
+    const activeLogicalIndex = preservePosition ? getLogicalIndex() : 0;
+
     visibleCount = getVisibleCount();
     cloneCount = visibleCount;
     slideStep = 100 / visibleCount;
@@ -206,7 +213,7 @@ if (galleryTrack && galleryViewport && galleryPrev && galleryNext) {
       )
       .join('');
 
-    currentIndex = cloneCount;
+    currentIndex = cloneCount + activeLogicalIndex;
     updateTrackPosition(false);
   };
 
@@ -251,12 +258,16 @@ if (galleryTrack && galleryViewport && galleryPrev && galleryNext) {
     'touchstart',
     (event) => {
       touchStartX = event.touches[0].clientX;
+      touchStartY = event.touches[0].clientY;
     },
     { passive: true }
   );
 
   galleryViewport.addEventListener('touchend', (event) => {
     const deltaX = event.changedTouches[0].clientX - touchStartX;
+    const deltaY = event.changedTouches[0].clientY - touchStartY;
+
+    if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
     if (Math.abs(deltaX) < 45) return;
 
     if (deltaX < 0) {
@@ -268,7 +279,17 @@ if (galleryTrack && galleryViewport && galleryPrev && galleryNext) {
   });
 
   window.addEventListener('resize', () => {
-    buildCarousel();
+    const widthDelta = Math.abs(window.innerWidth - lastViewportWidth);
+    if (widthDelta < 2) return;
+
+    lastViewportWidth = window.innerWidth;
+
+    if (visibleCount !== getVisibleCount()) {
+      buildCarousel(true);
+      return;
+    }
+
+    updateTrackPosition(false);
   });
 
   buildCarousel();
