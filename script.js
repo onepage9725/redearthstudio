@@ -1,17 +1,16 @@
 const revealItems = document.querySelectorAll('.reveal');
 
-const animateScrollTo = (targetY, duration = 950) => {
+const animateScrollTo = (targetY, duration = 650) => {
   const startY = window.scrollY;
   const diff = targetY - startY;
   const startTime = performance.now();
 
-  const easeInOutCubic = (t) =>
-    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
   const tick = (now) => {
     const elapsed = now - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    const eased = easeInOutCubic(progress);
+    const eased = easeOutCubic(progress);
     window.scrollTo(0, startY + diff * eased);
 
     if (progress < 1) {
