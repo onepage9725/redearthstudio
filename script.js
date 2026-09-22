@@ -299,58 +299,49 @@ const lightbox = document.querySelector('#image-lightbox');
 const lightboxImage = document.querySelector('#lightbox-image');
 const lightboxClose = document.querySelector('#lightbox-close');
 
-// Paste your deployed Google Apps Script Web App URL here.
-const GOOGLE_SHEET_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxbEAXH6PiMhnIYpX-J0cLfpvI8lZdSdtLkHFa4RI-RPZ9uL-D9kg1Ti1Ry42c8Slzt/exec';
+const WHATSAPP_NUMBER = '60187639956';
 
 const contactForm = document.querySelector('#contact-form');
 const contactStatus = document.querySelector('#contact-status');
 
 if (contactForm && contactStatus) {
-  contactForm.addEventListener('submit', async (event) => {
+  contactForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
     const submitBtn = contactForm.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn ? submitBtn.textContent : 'Submit';
-
-    if (!GOOGLE_SHEET_WEB_APP_URL) {
-      contactStatus.textContent = 'Form endpoint not configured yet.';
-      return;
-    }
-
     const formData = new FormData(contactForm);
 
-    const payload = new URLSearchParams({
-      name: String(formData.get('name') || ''),
-      contact: String(formData.get('contact') || ''),
-      email: String(formData.get('email') || ''),
-      remark: String(formData.get('remark') || '')
-    });
+    const name = String(formData.get('name') || '').trim();
+    const contact = String(formData.get('contact') || '').trim();
+    const email = String(formData.get('email') || '').trim();
+    const remark = String(formData.get('remark') || '').trim();
 
-    try {
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending...';
-      }
+    const message = [
+      'Hi Red Earth Studio,',
+      'I am interested to join Red Earth Studio.',
+      '',
+      `Name: ${name}`,
+      `Phone: ${contact}`,
+      `Email: ${email}`,
+      `Message: ${remark || '-'}`
+    ].join('\n');
 
-      await fetch(GOOGLE_SHEET_WEB_APP_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        },
-        body: payload.toString()
-      });
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
-      contactStatus.textContent = 'Thanks. Your message has been submitted.';
-      contactForm.reset();
-    } catch (error) {
-      contactStatus.textContent = 'Unable to submit right now. Please try again.';
-    } finally {
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Opening WhatsApp...';
+    }
+
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    contactStatus.textContent = 'WhatsApp opened with your message. Please send it to complete your enquiry.';
+
+    setTimeout(() => {
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.textContent = originalBtnText;
+        submitBtn.textContent = 'Submit';
       }
-    }
+    }, 600);
   });
 }
 
