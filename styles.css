@@ -434,6 +434,10 @@ h2 {
   gap: 1.15rem;
 }
 
+#packages .package-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .package-card {
   position: relative;
   background: linear-gradient(160deg, #fff 0%, #fffdfb 60%, #f7efe6 100%);
@@ -541,6 +545,7 @@ h2 {
   padding-top: 7.2rem;
 }
 
+#packages.package-section,
 .workshop-page .package-section {
   width: min(1760px, 100%);
   padding-left: 1.6vw;
@@ -629,6 +634,13 @@ h2 {
 
 .package-visual {
   margin-bottom: 0.9rem;
+}
+
+.package-visual img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  border: 1px solid #d8c6b6;
 }
 
 .package-image-placeholder {
@@ -1331,6 +1343,10 @@ h2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  #packages .package-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .class-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1489,7 +1505,15 @@ h2 {
     font-size: 0.7rem;
   }
 
+  .package-visual img {
+    height: 188px;
+  }
+
   .class-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #packages .package-grid {
     grid-template-columns: 1fr;
   }
 
